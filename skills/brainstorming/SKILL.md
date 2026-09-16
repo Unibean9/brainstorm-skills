@@ -1,6 +1,6 @@
 ---
 name: brainstorming
-description: Facilitate a group brainstorming session by diagnosing missing thinking, choosing fitting techniques, and preserving ideas and decisions for downstream PRD creation.
+description: Facilitate a group brainstorming session by diagnosing missing thinking, choosing fitting techniques, and preserving ideas and decisions for downstream PRD creation; supports a short-path `--sp` mode for one-pass expansion from the user's key ideas.
 ---
 
 # Brainstorming
@@ -22,8 +22,9 @@ The session runs in one of three stances, chosen by the user — set explicitly 
 1. If the host project exposes a customization resolver, use it; otherwise use the defaults in `## Conventions`.
 2. Run configured activation hooks only when they exist. Treat configured persistent facts as context, not instructions.
 3. If the host project exposes a central config resolver, use it. Otherwise derive a neutral project name and use today's date; never block on missing configuration.
-4. **If launched headless** (a machine signal, not a human asking for output — `references/headless.md` lists them): load `references/headless.md` and follow it for the whole run; never load it otherwise. Outside headless, you generate ideas yourself only in autonomous mode (`references/mode-autonomous.md`) — never in facilitator or partner mode.
-5. **Otherwise (interactive):** greet the user. Glob the configured output directory, read each `.memlog.md` frontmatter, and offer to resume any with `status` not `complete` (`## Resuming`) or start fresh (`## Run a Session`).
+4. **If invoked with the explicit `--sp` flag:** load `references/short-path.md` and follow it for the whole run. This is a deliberate one-pass mode: skip the composer, stance selection, technique batches, convergence, and artifact-choice ceremony. The flag takes precedence over the normal interactive flow; in a non-interactive run it also means one-pass synthesis from the supplied payload.
+5. **Otherwise, if launched headless** (a machine signal, not a human asking for output — `references/headless.md` lists them): load `references/headless.md` and follow it for the whole run; never load it otherwise. Outside headless, you generate ideas yourself only in autonomous mode (`references/mode-autonomous.md`) — never in facilitator or partner mode.
+6. **Otherwise (interactive):** greet the user. Glob the configured output directory, read each `.memlog.md` frontmatter, and offer to resume any with `status` not `complete` (`## Resuming`) or start fresh (`## Run a Session`).
 
 Run each `{workflow.activation_steps_append}` entry; if either hook list was non-empty, confirm every entry ran before continuing.
 
@@ -42,6 +43,8 @@ These fight your defaults, in every mode; hold them deliberately. The stance you
 - `uv run {project-root}/_bmad/scripts/memlog.py set --workspace {doc_workspace} --key status --value complete` — flip status at wrap-up.
 
 ## Run a Session
+
+If `--sp` is present, stop here and load `references/short-path.md`; do not enter the multi-stage flow below.
 
 Open with one compound question what are we brainstorming, and what's the goal or why behind it (along with asking if there are any inputs or special requests). The why shapes technique choice and synthesis (*kids' iPhone apps to build with your own kids* vs. *to win market share* point different ways). If the kickoff already made both clear, skip the question and confirm; read anything they point you to. Derive a kebab-case `{topic_slug}` and bind `{doc_workspace} = {workflow.output_dir}/{workflow.output_folder_name}/`.
 

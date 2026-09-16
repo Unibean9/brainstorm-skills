@@ -24,6 +24,8 @@ frontend-design — create a landing page or pitch deck from the approved PRD
 
 The rough idea is the user's starting point, not a separate skill. `brainstorming` is activated when the user wants to explore an idea across multiple turns.
 
+For a faster one-pass flow, invoke brainstorming with `--sp` (short path). It asks only for the user's key idea, audience/problem, and desired outcome, then the agent fills in missing components from model knowledge. Inferred content is labeled as assumptions so it remains distinct from user-provided direction.
+
 ## Install with skills.sh
 
 After pushing the `skills/` directories to [Unibean9/brainstormer](https://github.com/Unibean9/brainstormer), install the full skill set:

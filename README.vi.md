@@ -24,6 +24,8 @@ frontend-design — tạo landing page hoặc pitch deck từ PRD đã duyệt
 
 Ý tưởng thô là điểm bắt đầu của người dùng, không phải một skill riêng. `brainstorming` được kích hoạt khi người dùng muốn đào sâu ý tưởng qua nhiều lượt trao đổi.
 
+Nếu cần đi nhanh, gọi brainstorming với flag `--sp` (short path). Skill chỉ hỏi một lượt các ý chính — ý tưởng/vấn đề, người dùng hoặc đối tượng, và kết quả mong muốn — rồi agent tự mở rộng phần còn thiếu bằng kiến thức của model. Các phần suy ra được đánh dấu là giả định để phân biệt với điều người dùng đã cung cấp.
+
 ## Cài đặt với skills.sh
 
 Sau khi push các thư mục `skills/` lên [Unibean9/brainstormer](https://github.com/Unibean9/brainstormer), cài toàn bộ bộ skill:
