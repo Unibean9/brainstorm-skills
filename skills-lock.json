@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "skills": {
+    "brainstorming": {
+      "source": "E:\\Working\\Unibean\\brainstorm-skills",
+      "sourceType": "local",
+      "computedHash": "aed69857ae4ba111812887e7ce6f854b28264e42bc8cbcf4ea16f27bbf1d271d"
+    },
+    "frontend-design": {
+      "source": "E:\\Working\\Unibean\\brainstorm-skills",
+      "sourceType": "local",
+      "computedHash": "a9448f257194c3a11a90245d50bd9873176b48978bdacef6473ee3301a056837"
+    },
+    "prd": {
+      "source": "E:\\Working\\Unibean\\brainstorm-skills",
+      "sourceType": "local",
+      "computedHash": "127483566ae96490b6946689397e7f3ed6a16dda536d7ade7b6215b9d727d3ec"
+    }
+  }
+}

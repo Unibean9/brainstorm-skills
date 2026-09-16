@@ -1,0 +1,17 @@
+Completed the requested run artifacts:
+
+- [.memlog.md](E:/Working/Unibean/brainstorm-skills/evals/runs/01-balcony-garden/.memlog.md)
+- [transcript.md](E:/Working/Unibean/brainstorm-skills/evals/runs/01-balcony-garden/transcript.md)
+- [prd.md](E:/Working/Unibean/brainstorm-skills/evals/runs/01-balcony-garden/prd.md)
+- [landing-page.html](E:/Working/Unibean/brainstorm-skills/evals/runs/01-balcony-garden/landing-page.html)
+
+Checks passed:
+
+- Exact 19 canonical user turns, in order
+- Explicit headless/replay mode
+- Final PRD with all required sections, 7 feature groups, 14 FRs
+- Self-contained semantic HTML, 9 sections, responsive CSS, `:focus-visible`, reduced-motion support, product mechanism visual
+- No external dependencies
+- Only the four requested artifacts present in the run directory
+
+The full evaluator still reports unrelated missing cases 02 and 03; the scoped case checker for 01 passes.

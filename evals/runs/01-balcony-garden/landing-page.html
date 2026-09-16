@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An in-pot care card that helps renters answer whether a plant needs water today.">
+  <title>Balcony Garden — Read the plant, then water</title>
+  <style>
+    :root {
+      --ink: #17231e;
+      --ink-soft: #52635b;
+      --paper: #f3f0e7;
+      --paper-deep: #e6e1d3;
+      --moss: #3d634e;
+      --moss-dark: #294636;
+      --leaf: #8daa6d;
+      --sun: #e7ae54;
+      --clay: #bb7656;
+      --line: rgba(23, 35, 30, .16);
+      --white: #fffdf7;
+      --font-display: Constantia, Cambria, serif;
+      --font-body: Calibri, "Segoe UI", sans-serif;
+      --font-mono: Consolas, "Courier New", monospace;
+      --shadow: 0 24px 70px rgba(41, 70, 54, .15);
+      --radius-lg: 2.2rem;
+      --radius-md: 1.25rem;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: var(--font-body);
+      font-size: 1.06rem;
+      line-height: 1.55;
+      overflow-x: hidden;
+    }
+    a { color: inherit; }
+    a:focus-visible, summary:focus-visible {
+      outline: 3px solid var(--sun);
+      outline-offset: 5px;
+      border-radius: .35rem;
+    }
+    .skip-link {
+      position: fixed;
+      left: 1rem;
+      top: -5rem;
+      z-index: 20;
+      padding: .7rem 1rem;
+      color: var(--white);
+      background: var(--moss-dark);
+      border-radius: .5rem;
+    }
+    .skip-link:focus { top: 1rem; }
+    .shell { width: min(1180px, calc(100% - 3rem)); margin: 0 auto; }
+    .eyebrow {
+      margin: 0;
+      color: var(--moss);
+      font: .73rem/1.2 var(--font-mono);
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1, h2, h3 { font-family: var(--font-display); font-weight: 400; letter-spacing: -.035em; }
+    h1 { max-width: 720px; margin-bottom: 1.35rem; font-size: clamp(3.6rem, 8vw, 7.6rem); line-height: .9; }
+    h2 { margin-bottom: 1rem; font-size: clamp(2.5rem, 5vw, 5rem); line-height: .95; }
+    h3 { margin-bottom: .7rem; font-size: 1.65rem; line-height: 1.05; }
+    .muted { color: var(--ink-soft); }
+    .site-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 88px;
+      border-bottom: 1px solid var(--line);
+    }
+    .wordmark {
+      display: inline-flex;
+      align-items: center;
+      gap: .65rem;
+      color: var(--moss-dark);
+      font: .8rem var(--font-mono);
+      letter-spacing: .12em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+    .seed-mark {
+      width: 1.3rem;
+      height: 1.3rem;
+      display: grid;
+      place-items: end start;
+      padding: .18rem;
+      border: 1px solid var(--moss-dark);
+      border-radius: 70% 30% 70% 30%;
+      transform: rotate(-28deg);
+    }
+    .seed-mark::after { content: ""; width: .52rem; height: .52rem; background: var(--sun); border-radius: 70% 30% 70% 30%; }
+    .nav-links { display: flex; gap: 1.35rem; align-items: center; }
+    .nav-links a { color: var(--ink-soft); font-size: .92rem; text-decoration: none; }
+    .nav-links a:hover { color: var(--moss-dark); }
+    .hero {
+      position: relative;
+      min-height: 720px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.02fr) minmax(360px, .98fr);
+      align-items: center;
+      gap: 3rem;
+      padding: 7rem 0 6rem;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      top: 8%;
+      right: -22vw;
+      width: min(55vw, 720px);
+      height: min(55vw, 720px);
+      border: 1px solid rgba(61, 99, 78, .16);
+      border-radius: 53% 47% 42% 58%;
+      transform: rotate(24deg);
+    }
+    .hero-copy { position: relative; z-index: 1; }
+    .hero-copy .eyebrow { margin-bottom: 1.55rem; }
+    .hero-copy > p:not(.eyebrow) { max-width: 550px; margin-bottom: 2rem; color: var(--ink-soft); font-size: 1.24rem; }
+    .button {
+      display: inline-flex;
+      min-height: 48px;
+      align-items: center;
+      justify-content: center;
+      padding: .72rem 1.15rem;
+      color: var(--white);
+      background: var(--moss-dark);
+      border: 1px solid var(--moss-dark);
+      border-radius: 999px;
+      font: .84rem var(--font-mono);
+      letter-spacing: .02em;
+      text-decoration: none;
+      transition: transform .2s ease, background-color .2s ease, box-shadow .2s ease;
+    }
+    .button:hover { background: var(--moss); box-shadow: 0 10px 22px rgba(41, 70, 54, .2); transform: translateY(-2px); }
+    .button:active { transform: translateY(0); }
+    .hero-note { display: flex; gap: .8rem; align-items: center; margin: 1.25rem 0 0; color: var(--ink-soft); font: .76rem var(--font-mono); }
+    .hero-note span { display: inline-block; width: .4rem; height: .4rem; background: var(--sun); border-radius: 50%; }
+    .hero-art { position: relative; min-height: 510px; }
+    .art-wash { position: absolute; inset: 2% 0 0 10%; background: var(--paper-deep); border-radius: 46% 54% 38% 62%; transform: rotate(-8deg); }
+    .art-caption { position: absolute; right: 0; bottom: 4%; max-width: 155px; color: var(--moss-dark); font: .72rem/1.35 var(--font-mono); text-transform: uppercase; }
+    .art-caption::before { content: "↗"; display: block; margin-bottom: .35rem; color: var(--sun); font-size: 1.4rem; }
+    .plant-illustration { position: absolute; inset: 2% 7% 2% 4%; width: 89%; height: 96%; overflow: visible; }
+    .plant-illustration .leaf { fill: var(--moss); }
+    .plant-illustration .leaf-light { fill: var(--leaf); }
+    .plant-illustration .stem { stroke: var(--moss-dark); stroke-width: 8; stroke-linecap: round; fill: none; }
+    .card-face { fill: var(--sun); stroke: var(--ink); stroke-width: 4; }
+    .card-line { stroke: var(--ink); stroke-width: 3; stroke-linecap: round; }
+    .card-word { fill: var(--ink); font-family: Consolas, monospace; font-size: 25px; letter-spacing: 2px; }
+    .pot { fill: var(--clay); stroke: var(--ink); stroke-width: 5; }
+    .soil { fill: var(--moss-dark); stroke: var(--ink); stroke-width: 5; }
+    .section { padding: 8rem 0; }
+    .section-rule { border-top: 1px solid var(--line); }
+    .intro-grid { display: grid; grid-template-columns: .72fr 1.28fr; gap: 5rem; align-items: start; }
+    .intro-grid h2 { max-width: 530px; }
+    .intro-copy { padding-top: .4rem; }
+    .intro-copy p { max-width: 520px; color: var(--ink-soft); font-size: 1.16rem; }
+    .pull-quote { margin: 2rem 0 0; padding: 1.3rem 0 0 1.3rem; border-left: 4px solid var(--sun); color: var(--moss-dark); font-family: var(--font-display); font-size: 1.55rem; line-height: 1.05; }
+    .mechanism-section { padding-top: 6rem; }
+    .mechanism-head { display: flex; justify-content: space-between; align-items: end; gap: 2rem; margin-bottom: 3.5rem; }
+    .mechanism-head h2 { max-width: 620px; margin-bottom: 0; }
+    .mechanism-head p { max-width: 280px; margin-bottom: .3rem; color: var(--ink-soft); }
+    .mechanism-board { position: relative; min-height: 600px; padding: 4rem; background: var(--moss-dark); border-radius: var(--radius-lg); overflow: hidden; color: var(--white); }
+    .mechanism-board::before, .mechanism-board::after { content: ""; position: absolute; border: 1px solid rgba(255,255,255,.14); border-radius: 50%; }
+    .mechanism-board::before { width: 500px; height: 500px; top: -260px; right: -110px; }
+    .mechanism-board::after { width: 330px; height: 330px; bottom: -190px; left: -90px; }
+    .board-label { position: relative; z-index: 1; color: #e7c783; font: .7rem var(--font-mono); letter-spacing: .12em; text-transform: uppercase; }
+    .board-copy { position: relative; z-index: 1; max-width: 400px; margin-top: 2rem; }
+    .board-copy h3 { font-size: clamp(2.4rem, 5vw, 4.3rem); }
+    .board-copy p { color: rgba(255,253,247,.72); }
+    .board-card { position: absolute; z-index: 2; right: 13%; top: 14%; width: min(280px, 37%); min-height: 380px; padding: 1.5rem; color: var(--ink); background: var(--sun); border: 3px solid var(--ink); box-shadow: 18px 22px 0 rgba(231,174,84,.26); transform: rotate(7deg); }
+    .board-card::before { content: "CARE CARD / v1"; display: block; padding-bottom: 1rem; border-bottom: 1px solid rgba(23,35,30,.4); font: .65rem var(--font-mono); letter-spacing: .12em; }
+    .board-card strong { display: block; margin: 3rem 0 .8rem; font: 400 clamp(2rem, 4vw, 3.5rem)/.88 var(--font-display); letter-spacing: -.05em; }
+    .board-card p { margin-bottom: 3rem; font: .82rem/1.35 var(--font-mono); }
+    .card-stamp { display: inline-block; padding: .35rem .5rem; border: 1px solid var(--ink); font: .66rem var(--font-mono); }
+    .callout { position: absolute; z-index: 3; right: 5%; bottom: 11%; width: 180px; padding: 1rem; color: var(--ink); background: var(--white); box-shadow: var(--shadow); transform: rotate(-5deg); }
+    .callout::before { content: ""; display: block; width: 22px; height: 22px; margin: -1.7rem auto .7rem; background: var(--sun); border-radius: 50%; }
+    .callout p { margin: 0; font: .72rem/1.35 var(--font-mono); }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin-top: 1px; background: var(--line); border: 1px solid var(--line); }
+    .step { min-height: 245px; padding: 2rem; background: var(--paper); }
+    .step:nth-child(2) { background: var(--paper-deep); }
+    .step-number { display: block; margin-bottom: 3rem; color: var(--moss); font: .72rem var(--font-mono); }
+    .step p { max-width: 235px; margin-bottom: 0; color: var(--ink-soft); }
+    .signal-section { background: var(--white); }
+    .signal-grid { display: grid; grid-template-columns: .85fr 1.15fr; gap: 5rem; align-items: center; }
+    .signal-copy p { max-width: 440px; color: var(--ink-soft); font-size: 1.15rem; }
+    .signal-tiles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+    .signal-tile { min-height: 245px; padding: 1.5rem; border: 1px solid var(--line); background: var(--paper); }
+    .signal-tile:last-child { background: var(--leaf); border-color: var(--leaf); }
+    .signal-icon { display: grid; width: 58px; height: 58px; place-items: center; margin-bottom: 2.5rem; border: 1px solid var(--ink); border-radius: 50%; font: 1.4rem var(--font-display); }
+    .signal-tile p { margin-bottom: 0; color: var(--ink-soft); font-size: .95rem; }
+    .signal-tile:last-child p { color: var(--moss-dark); }
+    .condition-section { position: relative; overflow: hidden; }
+    .condition-section::before { content: ""; position: absolute; z-index: -1; top: 10%; left: -18rem; width: 35rem; height: 35rem; border: 1px solid rgba(61,99,78,.15); border-radius: 50%; }
+    .condition-layout { display: grid; grid-template-columns: 1.2fr .8fr; gap: 4rem; }
+    .condition-layout h2 { max-width: 650px; }
+    .condition-layout > p { max-width: 320px; padding-top: .8rem; color: var(--ink-soft); }
+    .condition-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; grid-column: 1 / -1; margin-top: 1.5rem; }
+    .condition-card { position: relative; min-height: 245px; padding: 1.5rem; overflow: hidden; border-top: 5px solid var(--sun); background: var(--paper-deep); }
+    .condition-card:last-child { border-color: var(--leaf); background: var(--moss-dark); color: var(--white); }
+    .condition-card h3 { position: relative; z-index: 1; max-width: 210px; }
+    .condition-card p { position: relative; z-index: 1; max-width: 260px; margin-bottom: 0; color: var(--ink-soft); }
+    .condition-card:last-child p { color: rgba(255,253,247,.7); }
+    .sun-line { position: absolute; right: 1.3rem; bottom: 1rem; width: 110px; height: 110px; border: 1px solid var(--sun); border-radius: 50%; opacity: .65; }
+    .sun-line::after { content: ""; position: absolute; inset: 21px; border: 1px solid var(--sun); border-radius: 50%; }
+    .window-line { position: absolute; right: 1.4rem; bottom: 1rem; width: 105px; height: 135px; border: 2px solid rgba(255,253,247,.38); transform: skewY(-12deg); }
+    .window-line::after { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; border-left: 1px solid rgba(255,253,247,.38); }
+    .scope-section { background: var(--sun); }
+    .scope-layout { display: grid; grid-template-columns: .9fr 1.1fr; gap: 5rem; }
+    .scope-layout h2 { max-width: 480px; }
+    .scope-list { margin: 0; padding: 0; list-style: none; border-top: 1px solid rgba(23,35,30,.35); }
+    .scope-list li { display: flex; justify-content: space-between; gap: 1rem; padding: 1.05rem 0; border-bottom: 1px solid rgba(23,35,30,.35); }
+    .scope-list b { font-family: var(--font-display); font-size: 1.4rem; font-weight: 400; }
+    .scope-list span { color: var(--moss-dark); font: .75rem var(--font-mono); text-align: right; text-transform: uppercase; }
+    .questions-section { padding-bottom: 6rem; }
+    .questions-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+    .questions-layout p { color: var(--ink-soft); }
+    details { border-top: 1px solid var(--line); }
+    details:last-child { border-bottom: 1px solid var(--line); }
+    summary { display: flex; justify-content: space-between; gap: 1rem; padding: 1.15rem 0; cursor: pointer; list-style: none; font-family: var(--font-display); font-size: 1.25rem; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; color: var(--moss); font-family: var(--font-mono); }
+    details[open] summary::after { content: "−"; }
+    details p { padding: 0 2rem 1.2rem 0; margin-bottom: 0; font-size: .94rem; }
+    .assumption { display: inline-block; margin-top: .8rem; color: var(--moss-dark); font: .68rem var(--font-mono); letter-spacing: .02em; }
+    .closing { padding: 5rem 0 7rem; text-align: center; }
+    .closing h2 { max-width: 700px; margin: 0 auto 1.5rem; }
+    .closing p { max-width: 475px; margin: 0 auto 2rem; color: var(--ink-soft); }
+    footer { padding: 1.5rem 0; border-top: 1px solid var(--line); color: var(--ink-soft); font: .7rem var(--font-mono); }
+    .footer-row { display: flex; justify-content: space-between; gap: 1rem; }
+
+    @media (max-width: 850px) {
+      .shell { width: min(100% - 2rem, 680px); }
+      .site-nav { min-height: 72px; }
+      .nav-links a:not(:last-child) { display: none; }
+      .hero { min-height: auto; grid-template-columns: 1fr; gap: 1rem; padding: 5rem 0 3rem; }
+      .hero-art { min-height: 440px; margin: 1rem -1rem 0; }
+      .intro-grid, .signal-grid, .condition-layout, .scope-layout, .questions-layout { grid-template-columns: 1fr; gap: 2rem; }
+      .section { padding: 5.5rem 0; }
+      .mechanism-head { display: block; margin-bottom: 2rem; }
+      .mechanism-head p { margin-top: 1.2rem; }
+      .mechanism-board { min-height: 680px; padding: 2rem; }
+      .board-copy { max-width: 70%; }
+      .board-card { right: 8%; top: 39%; width: 43%; min-height: 320px; }
+      .callout { right: 4%; bottom: 6%; }
+      .steps { grid-template-columns: 1fr; }
+      .step { min-height: auto; }
+      .step-number { margin-bottom: 1.4rem; }
+      .condition-pair { grid-column: auto; grid-template-columns: 1fr; }
+      .condition-layout > p { padding-top: 0; }
+      .scope-list { margin-top: 1rem; }
+    }
+    @media (max-width: 480px) {
+      h1 { font-size: clamp(3.15rem, 16vw, 5rem); }
+      h2 { font-size: 3rem; }
+      .hero-art { min-height: 360px; }
+      .board-copy { max-width: 100%; }
+      .board-card { top: 43%; width: 53%; min-height: 290px; }
+      .board-card strong { margin-top: 2rem; font-size: 2.2rem; }
+      .callout { width: 145px; right: 3%; }
+      .signal-tiles { grid-template-columns: 1fr; }
+      .signal-tile { min-height: 190px; }
+      .signal-icon { margin-bottom: 1.5rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+      .button:hover { transform: none; }
+    }
+    @media print {
+      *, *::before, *::after { color: #000 !important; background: transparent !important; box-shadow: none !important; text-shadow: none !important; }
+      body { font-size: 10pt; }
+      .site-nav { min-height: 45px; }
+      .hero { min-height: auto; padding: 2rem 0; }
+      .hero-art { min-height: 300px; }
+      .section, .closing { padding: 2rem 0; }
+      .mechanism-board { min-height: 350px; border: 1px solid #000; }
+      .button { border: 1px solid #000; }
+      details p { display: block; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="shell site-nav" aria-label="Primary navigation">
+    <a class="wordmark" href="#top"><span class="seed-mark" aria-hidden="true"></span> Balcony / Garden</a>
+    <nav class="nav-links" aria-label="Page sections">
+      <a href="#mechanism">The card</a>
+      <a href="#scope">First version</a>
+      <a href="#how-it-works" class="button">See the care path</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="shell hero" id="top" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow">A first version for small rentals</p>
+        <h1 id="hero-title">Know what to check before you water.</h1>
+        <p>An in-pot care card for renters and apartment residents. It brings watering rhythm and visible signs of too little or too much water to the plant itself—without an app or charging.</p>
+        <a class="button" href="#how-it-works">See the card’s 10-second path</a>
+        <p class="hero-note"><span aria-hidden="true"></span> No app &nbsp;·&nbsp; No power &nbsp;·&nbsp; Care where it happens</p>
+      </div>
+      <div class="hero-art" aria-label="Illustration of a plant pot with an in-pot care card" role="img">
+        <div class="art-wash" aria-hidden="true"></div>
+        <svg class="plant-illustration" viewBox="0 0 560 560" aria-hidden="true">
+          <path class="stem" d="M291 352 C280 270 300 181 335 106" />
+          <path class="stem" d="M286 278 C240 230 210 190 183 146" />
+          <path class="stem" d="M307 227 C354 190 393 151 419 110" />
+          <path class="leaf-light" d="M181 151 C128 154 101 127 108 82 C153 80 184 102 181 151Z" />
+          <path class="leaf" d="M335 109 C321 66 345 30 389 25 C406 67 385 101 335 109Z" />
+          <path class="leaf-light" d="M418 113 C423 66 457 45 497 59 C492 101 464 124 418 113Z" />
+          <path class="leaf" d="M289 249 C247 268 205 249 198 210 C237 199 272 212 289 249Z" />
+          <path class="leaf-light" d="M294 178 C253 161 247 119 269 91 C305 111 316 143 294 178Z" />
+          <path class="pot" d="M172 350 L407 350 L374 504 Q290 539 206 504Z" />
+          <path class="soil" d="M166 345 Q289 315 414 345 L407 374 Q291 401 172 373Z" />
+          <path class="card-face" d="M355 154 L493 130 L514 334 L375 356Z" />
+          <path class="card-line" d="M384 200 L466 186 M389 220 L449 210 M399 285 L474 273" />
+          <text class="card-word" x="382" y="171" transform="rotate(-10 382 171)">WATER?</text>
+          <text class="card-word" x="398" y="262" transform="rotate(-10 398 262)">RHYTHM</text>
+          <circle cx="430" cy="304" r="12" fill="none" stroke="#17231e" stroke-width="3" />
+        </svg>
+        <p class="art-caption">The answer stays beside the plant.</p>
+      </div>
+    </section>
+
+    <section class="section section-rule" id="problem" aria-labelledby="problem-title">
+      <div class="shell intro-grid">
+        <div>
+          <p class="eyebrow">The ten-second question</p>
+          <h2 id="problem-title">A plant looks sick. The answer isn’t obvious.</h2>
+        </div>
+        <div class="intro-copy">
+          <p>People can buy a plant excitedly, then a few weeks later see it look sick and not know what they did wrong. For someone working during the day, the repeated question is smaller and more urgent than learning a whole garden:</p>
+          <p class="pull-quote">“Does this plant need water today?”</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section mechanism-section" id="mechanism" aria-labelledby="mechanism-title">
+      <div class="shell">
+        <div class="mechanism-head">
+          <div>
+            <p class="eyebrow">The mechanism</p>
+            <h2 id="mechanism-title">Put the guidance where care happens.</h2>
+          </div>
+          <p>The Care Card sits in the pot, ready for the moment the plant is already in view.</p>
+        </div>
+        <div class="mechanism-board">
+          <span class="board-label">In-pot care card / v1 direction</span>
+          <div class="board-copy">
+            <h3>Read the plant, not a calendar alone.</h3>
+            <p>Watering rhythm gives context. Visible signs help the person account for too little or too much water when conditions vary.</p>
+            <span class="assumption">[ASSUMPTION] Visual card layout illustrates the confirmed mechanism.</span>
+          </div>
+          <div class="board-card" aria-label="Illustrated care card showing water today, rhythm, and visible signs">
+            <strong>WATER<br>TODAY?</strong>
+            <p>RHYTHM +<br>VISIBLE SIGNS</p>
+            <span class="card-stamp">LOOK / READ / DECIDE</span>
+          </div>
+          <aside class="callout" aria-label="Product placement note"><p>At the exact place where care happens.</p></aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-rule" id="how-it-works" aria-labelledby="journey-title">
+      <div class="shell">
+        <p class="eyebrow">A simple care journey</p>
+        <h2 id="journey-title">Three things can fit inside a short check.</h2>
+        <div class="steps" aria-label="Care card journey">
+          <article class="step">
+            <span class="step-number">01 / LOOK</span>
+            <h3>Meet the plant where it is.</h3>
+            <p>The renter looks at the plant before work, in its real setting.</p>
+          </article>
+          <article class="step">
+            <span class="step-number">02 / READ</span>
+            <h3>Find the rhythm and signs.</h3>
+            <p>The Care Card explains its Watering Rhythm and Visible Signs of too little or too much water.</p>
+          </article>
+          <article class="step">
+            <span class="step-number">03 / DECIDE</span>
+            <h3>Answer today’s question.</h3>
+            <p>The Water-Today Decision happens at the exact place where care happens.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section signal-section" id="signals" aria-labelledby="signals-title">
+      <div class="shell signal-grid">
+        <div class="signal-copy">
+          <p class="eyebrow">Visible, not over-explained</p>
+          <h2 id="signals-title">The plant gets a say.</h2>
+          <p>A fixed watering calendar cannot be identical for every setting. The card pairs a rhythm with the visible signals the plant is showing.</p>
+        </div>
+        <div class="signal-tiles">
+          <article class="signal-tile">
+            <div class="signal-icon" aria-hidden="true">↓</div>
+            <h3>Too little water</h3>
+            <p>The card explains the visible signs to look for.</p>
+          </article>
+          <article class="signal-tile">
+            <div class="signal-icon" aria-hidden="true">↑</div>
+            <h3>Too much water</h3>
+            <p>The card explains the visible signs to look for.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section condition-section section-rule" id="conditions" aria-labelledby="conditions-title">
+      <div class="shell condition-layout">
+        <div>
+          <p class="eyebrow">Same question, different conditions</p>
+          <h2 id="conditions-title">A west-facing balcony is not a north-facing window.</h2>
+        </div>
+        <p>The guidance must leave room for the plant’s setting. That is why Visible Signs matter alongside a Watering Rhythm.</p>
+        <div class="condition-pair">
+          <article class="condition-card">
+            <h3>West-facing balcony</h3>
+            <p>A named condition from the replay. The rhythm cannot simply be copied over.</p>
+            <div class="sun-line" aria-hidden="true"></div>
+          </article>
+          <article class="condition-card">
+            <h3>North-facing window</h3>
+            <p>A named condition from the replay. The card keeps the plant’s visible state in the conversation.</p>
+            <div class="window-line" aria-hidden="true"></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section scope-section" id="scope" aria-labelledby="scope-title">
+      <div class="shell scope-layout">
+        <div>
+          <p class="eyebrow">The first version</p>
+          <h2 id="scope-title">Small enough to keep useful.</h2>
+          <p>v1 stays with the chosen physical direction and a few common plants. The edges are part of the product.</p>
+        </div>
+        <ul class="scope-list" aria-label="First version scope">
+          <li><b>In-pot Care Card</b><span>Chosen direction</span></li>
+          <li><b>A few common plants</b><span>v1 coverage</span></li>
+          <li><b>Sensors</b><span>Later</span></li>
+          <li><b>Reminder app</b><span>Out of v1</span></li>
+          <li><b>Self-watering pot</b><span>Out of v1</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section questions-section" id="questions" aria-labelledby="questions-title">
+      <div class="shell questions-layout">
+        <div>
+          <p class="eyebrow">Open by design</p>
+          <h2 id="questions-title">A clear direction can still have honest blanks.</h2>
+          <p>The direction is locked. The details the replay did not decide stay open: the common-plant set, exact visible-sign wording, physical material, and the success target.</p>
+          <span class="assumption">[ASSUMPTION] These prompts are carried forward from the PRD’s open questions.</span>
+        </div>
+        <div>
+          <details>
+            <summary>Which plants are in v1?</summary>
+            <p>The replay says “a few common plants.” The exact Common Plant Set is still open.</p>
+          </details>
+          <details>
+            <summary>What signs will the card show?</summary>
+            <p>The card must explain signs of too little or too much water. The exact signs and wording still need a content decision.</p>
+          </details>
+          <details>
+            <summary>What is the card made of?</summary>
+            <p>Material, dimensions, insertion method, and in-pot exposure limits were not discussed and remain open.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="shell closing" aria-labelledby="closing-title">
+      <p class="eyebrow">The point of the card</p>
+      <h2 id="closing-title">Less guessing. A better look at what the plant is saying.</h2>
+      <p>The Care Card keeps the question close, the guidance visible, and the first version grounded in what was actually chosen.</p>
+      <a class="button" href="#mechanism">Return to the card</a>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell footer-row"><span>Balcony / Garden</span><span>In-pot care card · v1 direction</span></div>
+  </footer>
+</body>
+</html>

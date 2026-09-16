@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tablemate — room for more voices</title>
+  <style>
+    :root {
+      --ink: #17231f;
+      --paper: #f4f0e8;
+      --card: #fffdf8;
+      --sage: #b8c9b8;
+      --moss: #345c4c;
+      --rust: #c75c3c;
+      --gold: #e3b34e;
+      --blue: #5e8290;
+      --line: rgba(23,35,31,.18);
+      --display: Constantia, Cambria, serif;
+      --body: Calibri, "Segoe UI", sans-serif;
+      --mono: Consolas, "Courier New", monospace;
+    }
+    * { box-sizing: border-box; }
+    @page { size: 1600px 900px; margin: 0; }
+    html, body { margin: 0; background: #ded8cb; color: var(--ink); font-family: var(--body); }
+    body { padding: 2.5vw 0; }
+    .slide { width: min(1600px, 92vw); aspect-ratio: 16 / 9; margin: 0 auto 2.5vw; position: relative; overflow: hidden; padding: 6.2cqh 7cqw; background: var(--paper); container-type: size; page-break-after: always; isolation: isolate; }
+    .slide::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .16; background-image: radial-gradient(rgba(23,35,31,.35) .55px, transparent .55px); background-size: 6px 6px; mix-blend-mode: multiply; z-index: -1; }
+    [data-theme="dark"] { background: var(--ink); color: var(--paper); }
+    [data-theme="dark"]::after { opacity: .08; mix-blend-mode: screen; }
+    [data-theme="cream"] { background: #efe6d3; }
+    [data-theme="rust-bg"] { background: var(--rust); color: #fff8ed; }
+    .eyebrow, .kicker { font: 600 1.65cqh/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--moss); }
+    [data-theme="dark"] .eyebrow, [data-theme="dark"] .kicker { color: var(--gold); }
+    h1, h2, h3, p { margin: 0; }
+    h1 { font: 300 min(10cqw, 13cqh)/.92 var(--display); letter-spacing: -.045em; }
+    h2 { font: 300 min(6.3cqw, 8cqh)/.96 var(--display); letter-spacing: -.03em; max-width: 78cqw; }
+    h3 { font: 600 2.5cqh/1.05 var(--body); }
+    .lede { margin-top: 3cqh; max-width: 55cqw; font-size: 2.5cqh; line-height: 1.3; }
+    .small { font-size: 1.65cqh; line-height: 1.3; }
+    .micro { font: 600 1.35cqh/1.2 var(--mono); letter-spacing: .07em; text-transform: uppercase; }
+    .muted { color: rgba(23,35,31,.62); }
+    [data-theme="dark"] .muted { color: rgba(244,240,232,.64); }
+    .accent { color: var(--rust); }
+    [data-theme="dark"] .accent { color: var(--gold); }
+    .page { position: absolute; right: 6.8cqw; bottom: 3.4cqh; font: 600 1.45cqh var(--mono); opacity: .65; }
+    .credit { position: absolute; left: 7cqw; bottom: 3.4cqh; font: 600 1.2cqh var(--mono); letter-spacing: .05em; opacity: .6; }
+    .orb { position: absolute; width: 24cqw; height: 24cqw; border-radius: 50%; background: var(--gold); right: -6cqw; top: -10cqw; z-index: -1; }
+    .orb::after { content: ""; position: absolute; width: 12cqw; height: 12cqw; border: 2px solid var(--moss); border-radius: 50%; left: 3cqw; top: 4cqw; }
+    .cover-mark { position: absolute; right: 12cqw; bottom: 13cqh; width: 28cqw; height: 28cqw; border: 1px solid rgba(23,35,31,.35); border-radius: 50%; transform: rotate(-18deg); }
+    .cover-mark::before, .cover-mark::after { content: ""; position: absolute; inset: 11%; border: 1px solid rgba(23,35,31,.35); border-radius: 50%; }
+    .cover-mark::after { inset: 23%; border-color: var(--rust); }
+    .columns { display: grid; grid-template-columns: 1.05fr .95fr; gap: 5cqw; align-items: center; height: 70cqh; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6cqw; margin-top: 5cqh; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2cqw; margin-top: 4cqh; }
+    .card { background: var(--card); border: 1px solid var(--line); padding: 2.5cqh 1.7cqw; min-height: 18cqh; box-shadow: 7px 7px 0 rgba(23,35,31,.08); }
+    [data-theme="dark"] .card { background: rgba(255,253,248,.08); border-color: rgba(244,240,232,.2); box-shadow: 7px 7px 0 rgba(0,0,0,.16); }
+    .card strong { display: block; color: var(--rust); font: 600 2.1cqh/1.1 var(--body); margin-bottom: 1.2cqh; }
+    .dark .card strong { color: var(--gold); }
+    .big-word { font: 300 min(13cqw, 22cqh)/.8 var(--display); letter-spacing: -.06em; }
+    .quote { border-left: .45cqw solid var(--rust); padding-left: 2cqw; font: 300 4.2cqh/1.06 var(--display); max-width: 53cqw; }
+    .pill { display: inline-block; padding: .9cqh 1cqw; border: 1px solid currentColor; border-radius: 999px; font: 600 1.45cqh var(--mono); letter-spacing: .05em; text-transform: uppercase; }
+    .timeline { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 7cqh; border-top: 2px solid var(--moss); }
+    .timeline .node { position: relative; padding: 3cqh 1.2cqw 0 0; min-height: 20cqh; border-right: 1px solid var(--line); }
+    .timeline .node::before { content: ""; position: absolute; top: -1cqh; left: 0; width: 2cqh; height: 2cqh; border-radius: 50%; background: var(--rust); }
+    .timeline h3 { margin-bottom: 1.2cqh; }
+    .flow { display: flex; align-items: center; justify-content: space-between; gap: 1.1cqw; margin-top: 6cqh; }
+    .flow .step { flex: 1; min-height: 16cqh; padding: 2.3cqh 1.2cqw; border: 1px solid var(--line); background: var(--card); position: relative; }
+    .flow .step:not(:last-child)::after { content: "→"; position: absolute; right: -1.2cqw; top: 42%; color: var(--rust); font: 300 3cqh var(--display); z-index: 2; }
+    .flow .num { font: 300 5cqh var(--display); color: var(--rust); }
+    .device { border: 1px solid var(--ink); background: #e8eee5; min-height: 48cqh; padding: 3cqh 2cqw; box-shadow: 1.2cqw 1.2cqw 0 var(--moss); position: relative; }
+    .device .topbar { display: flex; justify-content: space-between; border-bottom: 1px solid var(--line); padding-bottom: 1.2cqh; }
+    .device .prompt { margin: 5cqh 0 3cqh; background: var(--ink); color: var(--paper); padding: 2.5cqh 1.5cqw; font: 300 3.5cqh/1.05 var(--display); }
+    .trace { display: grid; gap: 1cqh; }
+    .trace-row { display: grid; grid-template-columns: 5cqw 1fr 7cqw; align-items: center; gap: 1cqw; font-size: 1.75cqh; }
+    .trace-row span:first-child { font: 600 1.35cqh var(--mono); text-transform: uppercase; color: var(--moss); }
+    .trace-bar { height: 1.4cqh; background: var(--sage); }
+    .trace-bar.ai { background: var(--gold); }
+    .trace-row .tag { font: 600 1.2cqh var(--mono); text-align: right; }
+    .ring { display: grid; place-items: center; width: 35cqh; height: 35cqh; border-radius: 50%; border: 2px solid var(--rust); margin: 0 auto; position: relative; }
+    .ring::before, .ring::after { content: ""; position: absolute; border-radius: 50%; border: 1px solid var(--moss); }
+    .ring::before { inset: 15%; } .ring::after { inset: 31%; border-color: var(--gold); }
+    .ring-label { text-align: center; font: 300 4.4cqh/.95 var(--display); max-width: 22cqh; }
+    .matrix { margin-top: 4cqh; border: 1px solid var(--line); }
+    .matrix-row { display: grid; grid-template-columns: 1.1fr .85fr .85fr .9fr; border-bottom: 1px solid var(--line); }
+    .matrix-row:last-child { border-bottom: 0; }
+    .matrix-row > div { padding: 1.7cqh 1cqw; border-right: 1px solid var(--line); font-size: 1.55cqh; }
+    .matrix-row > div:last-child { border-right: 0; }
+    .matrix-head { background: var(--moss); color: var(--paper); font: 600 1.4cqh var(--mono); text-transform: uppercase; }
+    .matrix .yes { color: var(--moss); font-weight: 600; } .matrix .no { color: var(--rust); font-weight: 600; }
+    .risk-list { margin-top: 4cqh; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2cqw 3cqw; }
+    .risk { border-top: 2px solid var(--rust); padding-top: 1.3cqh; }
+    .risk b { font-size: 2cqh; }
+    .risk p { margin-top: .8cqh; font-size: 1.6cqh; line-height: 1.25; }
+    .metric { border-top: 2px solid var(--gold); padding-top: 1.5cqh; }
+    .metric .label { font: 600 1.35cqh var(--mono); text-transform: uppercase; letter-spacing: .05em; }
+    .metric .value { font: 300 5.5cqh/.9 var(--display); margin: 1.5cqh 0; }
+    .metric .value.open { color: var(--rust); font-size: 4.3cqh; }
+    .notes { display: none; }
+    .reveal { animation: rise .7s ease-out both; }
+    .reveal:nth-child(2) { animation-delay: .08s; } .reveal:nth-child(3) { animation-delay: .16s; } .reveal:nth-child(4) { animation-delay: .24s; }
+    @keyframes rise { from { opacity: 0; transform: translateY(1.5cqh); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; opacity: 1 !important; transform: none !important; } }
+    @media (max-width: 900px) { body { padding: 0; } .slide { width: 100vw; margin-bottom: 2vw; } }
+    @media print { @page { size: 1600px 900px; margin: 0; } html, body { background: var(--paper); } body { padding: 0; } .slide { width: 1600px; height: 900px; margin: 0; page-break-after: always; break-after: page; } .reveal { animation: none !important; opacity: 1 !important; transform: none !important; } }
+  </style>
+</head>
+<body>
+  <section class="slide" data-theme="cream" data-slide="01-title">
+    <div class="orb"></div><div class="cover-mark"></div>
+    <div class="eyebrow reveal">Tablemate / classroom concept</div>
+    <h1 class="reveal" style="margin-top: 7cqh; max-width: 63cqw;">Room for<br><span class="accent">more voices.</span></h1>
+    <p class="lede reveal">A question-led voice facilitator for fairer student-group brainstorming — with teacher control and traceable AI boundaries.</p>
+    <span class="pill reveal" style="margin-top: 4cqh;">Replay-grounded / v1 direction</span>
+    <div class="credit">Source of truth: Tablemate PRD · 19-turn replay</div><div class="page">01 / 12</div>
+    <aside class="notes">Open with the desired outcome, not a success claim: more balanced participation is the goal, and its metric is still open. This deck is derived from the final PRD and the canonical replay.</aside>
+  </section>
+
+  <section class="slide" data-slide="02-problem">
+    <div class="eyebrow">01 / the problem</div>
+    <div class="columns">
+      <div><div class="big-word accent">Dominance.</div><p class="lede">One fast, confident student can pull the group toward their own idea.</p></div>
+      <div class="grid-3" style="display:grid; grid-template-columns:1fr; margin-top:0;">
+        <div class="card reveal"><strong>Quieter students</strong><p class="small">May have good ideas but cannot enter the conversation.</p></div>
+        <div class="card reveal"><strong>Teacher bandwidth</strong><p class="small">Cannot stand in the middle of every group and manage every speaking turn.</p></div>
+        <div class="card reveal"><strong>Classroom clock</strong><p class="small">A group with fifteen minutes needs short prompts, not a lecture.</p></div>
+      </div>
+    </div>
+    <div class="credit">Tablemate · problem framing</div><div class="page">02 / 12</div>
+    <aside class="notes">The problem is not that students lack ideas. It is that the conversational surface can reward speed and confidence, while the teacher cannot manually rebalance every group.</aside>
+  </section>
+
+  <section class="slide" data-theme="dark" data-slide="03-audience">
+    <div class="eyebrow">02 / audience</div>
+    <h2 style="margin-top: 3cqh;">Two perspectives.<br><span class="accent">One shared room.</span></h2>
+    <div class="grid-3" style="margin-top: 7cqh;">
+      <div class="card reveal"><span class="micro">Student group</span><h3 style="margin-top:2.2cqh;">Make room to contribute.</h3><p class="small" style="margin-top:2cqh;">A group that needs a short prompt, a place for ideas, and a way to revisit what was almost forgotten.</p></div>
+      <div class="card reveal"><span class="micro">Teacher</span><h3 style="margin-top:2.2cqh;">Stay in control.</h3><p class="small" style="margin-top:2cqh;">An overseer who needs to know whether AI is steering the answer — without standing inside every group.</p></div>
+      <div class="card reveal"><span class="micro">Decision audience</span><h3 style="margin-top:2.2cqh;">See the boundary.</h3><p class="small" style="margin-top:2cqh;">School decision-makers need the v1 promise stated narrowly; deployment and governance questions remain open.</p></div>
+    </div>
+    <div class="credit">Tablemate · target users</div><div class="page">03 / 12</div>
+    <aside class="notes">The replay gives us the student and teacher perspectives. The deck audience is teachers and school decision-makers because that is the requested handoff, not evidence of a market or customer base.</aside>
+  </section>
+
+  <section class="slide" data-slide="04-insight">
+    <div class="eyebrow">03 / insight</div>
+    <div class="columns">
+      <div><p class="quote">The facilitator should create room for ideas — not become the source of the answer.</p><p class="lede small muted">The product’s role is intentionally narrow.</p></div>
+      <div class="ring"><div class="ring-label">ask<br><span class="accent">→</span><br>trace<br><span class="accent">→</span><br>return</div></div>
+    </div>
+    <div class="credit">Tablemate · solution thesis</div><div class="page">04 / 12</div>
+    <aside class="notes">This is the hinge of the concept. A voice interface is not automatically fair. The chosen direction limits authority: ask one short question, trace contributions, and bring back an idea that disappeared.</aside>
+  </section>
+
+  <section class="slide" data-theme="cream" data-slide="05-solution">
+    <div class="eyebrow">04 / solution</div>
+    <h2 style="margin-top: 3cqh;">Tablemate keeps the<br><span class="accent">conversation legible.</span></h2>
+    <div class="flow">
+      <div class="step reveal"><div class="num">01</div><h3>Ask</h3><p class="small" style="margin-top:1.5cqh;">One short question at a time.</p></div>
+      <div class="step reveal"><div class="num">02</div><h3>Capture</h3><p class="small" style="margin-top:1.5cqh;">Keep an Idea Trace of Contributions.</p></div>
+      <div class="step reveal"><div class="num">03</div><h3>Recall</h3><p class="small" style="margin-top:1.5cqh;">Bring back an idea mentioned once.</p></div>
+      <div class="step reveal"><div class="num">04</div><h3>Export</h3><p class="small" style="margin-top:1.5cqh;">Turn the trace into a PRD Export.</p></div>
+    </div>
+    <p class="small muted" style="margin-top: 5cqh; max-width: 68cqw;">V1: one group · English + Vietnamese · no grading. Exact export shape and privacy policy remain open.</p>
+    <div class="credit">Tablemate · v1 solution shape</div><div class="page">05 / 12</div>
+    <aside class="notes">The four-step flow is a capability summary from the PRD. It is not a claim that the flow has been implemented or validated.</aside>
+  </section>
+
+  <section class="slide" data-slide="06-how-it-works">
+    <div class="eyebrow">05 / how it works</div>
+    <div class="columns">
+      <div>
+        <span class="pill">default / question-only</span>
+        <h2 style="margin-top: 3cqh;">The teacher holds<br><span class="accent">the switch.</span></h2>
+        <p class="lede small">If AI contributes one bounded suggestion, the Teacher must explicitly enable that mode.</p>
+      </div>
+      <div class="device reveal">
+        <div class="topbar"><span class="micro">Tablemate session</span><span class="pill" style="padding:.5cqh .7cqw;">Question-only</span></div>
+        <div class="prompt">What idea has not had room yet?</div>
+        <div class="trace">
+          <div class="trace-row"><span>student</span><div class="trace-bar"></div><span class="tag">origin: group</span></div>
+          <div class="trace-row"><span>student</span><div class="trace-bar"></div><span class="tag">origin: group</span></div>
+          <div class="trace-row"><span>ai</span><div class="trace-bar ai"></div><span class="tag">off by default</span></div>
+        </div>
+        <p class="small muted" style="margin-top:3cqh;">Mode state is a trust surface. Exact Teacher UI is open.</p>
+      </div>
+    </div>
+    <div class="credit">Tablemate · Teacher control</div><div class="page">06 / 12</div>
+    <aside class="notes">The mock screen is a conceptual visual, not a product screenshot. The non-negotiable behavior is the control state: question-only by default, bounded suggestion only after explicit Teacher enablement.</aside>
+  </section>
+
+  <section class="slide" data-theme="dark" data-slide="07-experience" >
+    <div class="eyebrow">06 / product experience</div>
+    <h2 style="margin-top: 3cqh;">A trace that remembers<br><span class="accent">without pretending.</span></h2>
+    <div class="timeline">
+      <div class="node reveal"><h3>Contribution</h3><p class="small muted">A student idea enters the session.</p></div>
+      <div class="node reveal"><h3>Uncertainty</h3><p class="small muted">Voice transcription may be a False Trace.</p></div>
+      <div class="node reveal"><h3>Recall</h3><p class="small muted">An idea mentioned once returns to the room.</p></div>
+      <div class="node reveal"><h3>Development</h3><p class="small muted">AI Provenance stays attached if the idea evolves.</p></div>
+    </div>
+    <div class="grid-3" style="margin-top:7cqh;">
+      <div class="card reveal"><strong>Not a verdict</strong><p class="small">No idea is praised into becoming “the correct answer.”</p></div>
+      <div class="card reveal"><strong>Not a score</strong><p class="small">The trace is not a grading record in v1.</p></div>
+      <div class="card reveal"><strong>Not a certainty</strong><p class="small">Machine transcription does not outrank the student’s meaning.</p></div>
+    </div>
+    <div class="credit">Tablemate · Idea Trace and provenance</div><div class="page">07 / 12</div>
+    <aside class="notes">The trace is useful only if its limits are visible. This slide keeps the product experience and the risk model together: recall is a feature, attribution and transcription are unresolved trust surfaces.</aside>
+  </section>
+
+  <section class="slide" data-slide="08-differentiation">
+    <div class="eyebrow">07 / differentiation</div>
+    <h2 style="margin-top: 3cqh;">The product is defined by<br><span class="accent">what it refuses to do.</span></h2>
+    <div class="matrix">
+      <div class="matrix-row matrix-head"><div>Behavior</div><div>Default</div><div>Teacher control</div><div>Provenance</div></div>
+      <div class="matrix-row"><div>Ask a short question</div><div class="yes">Yes</div><div>Reviewable</div><div>Group input</div></div>
+      <div class="matrix-row"><div>Offer one bounded suggestion</div><div class="no">No</div><div class="yes">Explicit enablement</div><div class="yes">AI label</div></div>
+      <div class="matrix-row"><div>Grade students</div><div class="no">No</div><div class="no">Out of scope</div><div class="no">No score</div></div>
+      <div class="matrix-row"><div>Praise the correct idea</div><div class="no">No</div><div class="no">Avoid</div><div class="no">No authority</div></div>
+    </div>
+    <p class="small muted" style="margin-top:4cqh;">Differentiation here is a product boundary, not a competitive claim. The replay contains no market comparison.</p>
+    <div class="credit">Tablemate · trust model</div><div class="page">08 / 12</div>
+    <aside class="notes">Do not frame this as “better than competitors”; no competitive research was part of the replay. The differentiator we can honestly state is the explicit boundary around AI authority, teacher control, and grading.</aside>
+  </section>
+
+  <section class="slide" data-theme="rust-bg" data-slide="09-impact">
+    <div class="eyebrow" style="color:#fff8ed;">08 / desired impact</div>
+    <div class="columns">
+      <div><div class="big-word">Balance.</div><p class="lede">The intended outcome is more balanced participation in student-group brainstorming.</p></div>
+      <div>
+        <div class="metric"><div class="label">Primary signal</div><div class="value open">Open</div><p class="small">Definition, baseline, method, sample, owner, and target are not confirmed.</p></div>
+        <div class="metric" style="margin-top:4cqh;"><div class="label">Counter-signals</div><div class="value open">Must watch</div><p class="small">Inhibition, False Traces, unauthorized grading use, and AI authority.</p></div>
+      </div>
+    </div>
+    <div class="credit">Tablemate · no invented metrics</div><div class="page">09 / 12</div>
+    <aside class="notes">This is intentionally not a metrics slide with fabricated numbers. The replay confirms the desired outcome and explicitly says a numeric metric is missing. The risks are counter-signals that must not be optimized away.</aside>
+  </section>
+
+  <section class="slide" data-theme="cream" data-slide="10-scope">
+    <div class="eyebrow">09 / scope</div>
+    <h2 style="margin-top: 3cqh;">Small enough to govern.<br><span class="accent">Clear enough to test.</span></h2>
+    <div class="grid-4">
+      <div class="card reveal"><span class="micro">01</span><h3 style="margin-top:2cqh;">One group</h3><p class="small" style="margin-top:1.5cqh;">No multi-group orchestration in v1.</p></div>
+      <div class="card reveal"><span class="micro">02</span><h3 style="margin-top:2cqh;">Two languages</h3><p class="small" style="margin-top:1.5cqh;">English and Vietnamese support.</p></div>
+      <div class="card reveal"><span class="micro">03</span><h3 style="margin-top:2cqh;">Trace + export</h3><p class="small" style="margin-top:1.5cqh;">Idea Trace and PRD Export.</p></div>
+      <div class="card reveal"><span class="micro">04</span><h3 style="margin-top:2cqh;">No grading</h3><p class="small" style="margin-top:1.5cqh;">No scores or grading judgments.</p></div>
+    </div>
+    <p class="small muted" style="margin-top:5cqh; max-width:73cqw;">Open before release: consent, retention, access, deletion, correction, export policy, exact suggestion boundary, accessibility, and metric definition.</p>
+    <div class="credit">Tablemate · MVP boundary</div><div class="page">10 / 12</div>
+    <aside class="notes">Scope is intentionally narrow because the trust boundaries are load-bearing. The open items are not polish: privacy, provenance, and grading-use decisions must be resolved before saved traces are treated as a release-ready workflow.</aside>
+  </section>
+
+  <section class="slide" data-slide="11-risks">
+    <div class="eyebrow">10 / risks</div>
+    <h2 style="margin-top: 3cqh;">The hard questions are<br><span class="accent">part of the product.</span></h2>
+    <div class="risk-list">
+      <div class="risk reveal"><b>Could recording reduce participation?</b><p>Attribution may make students afraid of judgment. Identity visibility and consent are open.</p></div>
+      <div class="risk reveal"><b>Could a trace become a grade?</b><p>A saved Transcript may be used for grading without agreement. Policy is unresolved.</p></div>
+      <div class="risk reveal"><b>Could the machine be wrong?</b><p>Voice transcription can create a False Trace. Uncertainty and correction behavior are required.</p></div>
+      <div class="risk reveal"><b>Could AI quietly lead?</b><p>Praise can make one idea appear correct. Question-only is the default.</p></div>
+      <div class="risk reveal"><b>Could the tool become a lecture?</b><p>Fifteen minutes leaves no room for long facilitation. Short-question behavior needs review.</p></div>
+      <div class="risk reveal"><b>Could metrics create false confidence?</b><p>No numeric target is confirmed. Baseline and method stay open.</p></div>
+    </div>
+    <div class="credit">Tablemate · risk register</div><div class="page">11 / 12</div>
+    <aside class="notes">The risk slide is deliberately concrete. It turns the objections from the brainstorm into design and governance gates without pretending that a mitigation has already been validated.</aside>
+  </section>
+
+  <section class="slide" data-theme="dark" data-slide="12-next-step">
+    <div class="eyebrow">11 / next step</div>
+    <div class="columns">
+      <div><h2>Define the boundary.<br><span class="accent">Then test the room.</span></h2><p class="lede">A responsible next step is to resolve privacy, provenance, Teacher control, and measurement decisions before treating the concept as ready to build.</p></div>
+      <div class="card"><span class="micro">Decision sequence</span><div class="timeline" style="grid-template-columns:1fr; border-top:0; margin-top:3cqh; gap:1.5cqh;"><div class="node" style="border:0; min-height:auto; padding-top:2cqh;"><h3>01 · Specify</h3><p class="small muted">Mode boundary, trace states, consent and access.</p></div><div class="node" style="border:0; min-height:auto; padding-top:2cqh;"><h3>02 · Prototype</h3><p class="small muted">One-group, two-language question-led flow.</p></div><div class="node" style="border:0; min-height:auto; padding-top:2cqh;"><h3>03 · Measure</h3><p class="small muted">Define “balanced participation” before claiming impact.</p></div></div></div>
+    </div>
+    <p class="small" style="position:absolute; left:7cqw; bottom:9cqh; color:var(--gold);">Tablemate · room for more voices, with the boundaries visible.</p>
+    <div class="credit">Source of truth: Tablemate PRD · replay-grounded concept</div><div class="page">12 / 12</div>
+    <aside class="notes">Close with a request for decisions, not a traction claim: define the privacy and authority boundaries, prototype the narrow v1 flow, and agree on a metric definition before speaking about impact.</aside>
+  </section>
+</body>
+</html>

@@ -1,0 +1,184 @@
+version: 3
+name: brainstormer-product-pipeline
+description: >-
+  Long-form English golden conversations. The simulated user starts with a basic
+  idea, stays in a multi-turn brainstorm long enough to explore and choose, then
+  asks for a complete PRD and one HTML landing page or one HTML pitch deck.
+language: en
+pipeline:
+  - idea-seed
+  - brainstorming
+  - prd
+  - "frontend-design: landing-page | pitch-deck"
+rules:
+  - Ask one useful question per turn while the group is still brainstorming.
+  - Keep group ideas separate from AI-authored sparks.
+  - Do not promote a candidate to a durable decision without explicit confirmation.
+  - Mark inferred content as [ASSUMPTION].
+  - Do not invent claims, metrics, customers, testimonials, or traction.
+  - Continue exploring until the user explicitly asks to converge or hands off to PRD.
+quality_gates:
+  prd:
+    required_sections: [executive_summary, problem, target_users, jobs_to_be_done, glossary, journeys, solution, features, requirements, nfrs, scope, metrics, risks, assumptions, open_questions, acceptance_criteria]
+    minimum_feature_count: 5
+    minimum_functional_requirement_count: 10
+  landing_page:
+    output: one self-contained HTML file
+    minimum_sections: 6
+    required_ui_signals: [focus-visible, reduced-motion, responsive-breakpoint, product-specific-visual-device]
+    source_of_truth: prd.md
+    no_external_dependencies: true
+  pitch_deck:
+    output: one self-contained HTML file
+    minimum_slides: 10
+    minimum_speaker_notes: 4
+    minimum_visual_modes: 4
+    required_narrative: [title, problem, audience, insight, solution, how-it-works, product-experience, differentiation, business-or-impact, scope, risks, ask-or-next-step]
+    include_speaker_notes: true
+cases:
+  - id: 01-balcony-garden
+    title: Balcony Garden
+    stance: facilitator
+    branch: "frontend-design: landing-page"
+    seed: Renters want to keep plants alive but usually kill them because they cannot tell when to water.
+    turns:
+      - phase: opening
+        user: I want to help renters keep plants alive, but I do not know whether this should be an app or a physical product.
+      - phase: framing
+        user: What bothers me is that people buy a plant excitedly, then a few weeks later it looks sick and they do not know what they did wrong.
+      - phase: framing
+        user: The target is someone in a small rental or apartment who works during the day and does not want to study plant care.
+      - phase: framing
+        user: "The repeated question is not how to grow a big garden. It is simply: does this plant need water today?"
+      - phase: diverging
+        user: One direction is an app that schedules watering for each plant.
+      - phase: diverging
+        user: Another direction is a soil sensor that sends a phone notification.
+      - phase: diverging
+        user: We could make a self-watering pot so the person does not need to remember.
+      - phase: diverging
+        user: Or we could make a small card that sits in the pot and explains the watering rhythm and visible signs of too little or too much water.
+      - phase: shifting
+        user: If the user does not want an app and does not want to charge a battery, which direction still works?
+      - phase: shifting
+        user: If the user looks at the plant for ten seconds before work, what should the product tell them first?
+      - phase: shifting
+        user: What would the product look like from the plant's point of view rather than the owner's point of view?
+      - phase: critiquing
+        user: The card could look like an advertisement and be thrown away.
+      - phase: critiquing
+        user: A watering rhythm cannot be identical for a west-facing balcony and a north-facing window.
+      - phase: critiquing
+        user: A sensor is more precise, but cost grows with every pot and the user has to replace batteries.
+      - phase: converging
+        user: If we score the options on cost, no electricity, and removing guesswork, the card is strongest.
+      - phase: converging
+        user: The group chooses the in-pot care card because it is cheap, needs no power, and answers the question at the exact place where care happens.
+      - phase: confirmation
+        user: The first version covers only a few common plants. Sensors are later. The reminder app and self-watering pot are out of the first scope.
+      - phase: confirmation
+        user: The card must explain visible signs, not just give a fixed calendar, because conditions vary.
+      - phase: handoff
+        user: Lock this direction, create a complete PRD, and then create one self-contained HTML landing page using prd.md. Anything we did not discuss must remain an open question or an [ASSUMPTION].
+    expected:
+      - intent_mentions: [in-pot care card, renter, watering uncertainty, no power]
+      - prd_must_contain: [problem, target user, journey, chosen solution, feature requirements, scope, risks, metrics, open questions]
+      - output: landing-page.html
+
+  - id: 02-tablemate
+    title: Tablemate
+    stance: creative_partner
+    branch: "frontend-design: pitch-deck"
+    seed: Students in the same group have ideas, but one confident student dominates while quieter students disappear.
+    turns:
+      - phase: opening
+        user: I want to help student groups brainstorm more fairly in class.
+      - phase: framing
+        user: The first problem is that one fast, confident student pulls everyone toward their own idea.
+      - phase: framing
+        user: Quieter students may have good ideas but cannot enter the conversation.
+      - phase: framing
+        user: A teacher cannot stand in the middle of every group and manage every speaking turn.
+      - phase: diverging
+        user: We could use speaking tokens, ask everyone to write before talking, or use a bot that reminds people to make room.
+      - phase: diverging
+        user: The group wants a voice facilitator that asks one short question at a time and records what each person contributed.
+      - phase: diverging
+        user: It could also bring back ideas that were mentioned once and then forgotten.
+      - phase: shifting
+        user: "Look at this from the shy student's point of view: what would make speaking feel safe?"
+      - phase: shifting
+        user: "Look at this from the teacher's point of view: what must be visible so they trust that AI is not steering the answer?"
+      - phase: shifting
+        user: "Look at this from a group with only fifteen minutes: the facilitator must stay short and cannot become a lecture."
+      - phase: critiquing
+        user: AI might praise one idea and accidentally make the group think it is the correct answer.
+      - phase: critiquing
+        user: Recording who said what might make students afraid of being judged.
+      - phase: critiquing
+        user: If the transcript is saved, a teacher might use it for grading even though the group did not agree to that.
+      - phase: critiquing
+        user: Voice transcription may misunderstand a student and create a false trace.
+      - phase: converging
+        user: The default mode should only ask questions. A mode where AI contributes one bounded suggestion must be explicitly enabled by the teacher.
+      - phase: converging
+        user: The first version supports one group, English and Vietnamese, a trace of ideas, and PRD export. It does not grade students.
+      - phase: confirmation
+        user: Any AI suggestion must keep its AI provenance even if the group likes it and develops it further.
+      - phase: confirmation
+        user: The desired outcome is more balanced participation, but we do not have a numeric metric yet.
+      - phase: handoff
+        user: Create a complete PRD and then create one deep HTML pitch deck using prd.md for teachers and school decision-makers. Missing metrics must remain open questions.
+    expected:
+      - intent_mentions: [equitable participation, voice facilitator, teacher control, provenance, privacy]
+      - prd_must_contain: [user journey, facilitation modes, privacy boundary, transcript risks, functional requirements, out of scope]
+      - output: deck.html
+
+  - id: 03-community-cabinet
+    title: Community Cabinet
+    stance: facilitator
+    branch: "frontend-design: landing-page + pitch-deck"
+    seed: A neighborhood owns many rarely used tools, but residents buy new ones because they do not know where to borrow them.
+    turns:
+      - phase: opening
+        user: The basic idea is a shared cabinet of household tools for a neighborhood.
+      - phase: framing
+        user: Every home has a drill, ladder, vacuum, or camping item that gets used only a few times a year.
+      - phase: framing
+        user: People who need an item do not know whom to ask and feel awkward bothering a neighbor.
+      - phase: framing
+        user: Owners worry about damage, loss, and nobody being responsible.
+      - phase: diverging
+        user: We could make an open marketplace app where people list items and message each other.
+      - phase: diverging
+        user: We could make a smart locker in the building lobby.
+      - phase: diverging
+        user: We could start with a paper board, QR codes, and one neighborhood steward.
+      - phase: diverging
+        user: Another direction is to rent the tools from a local store and deliver them.
+      - phase: shifting
+        user: If residents do not want to download an app, how can they borrow and return an item?
+      - phase: shifting
+        user: If an item comes back damaged, which rule would make the owner willing to lend again?
+      - phase: shifting
+        user: If only twenty households participate, which model can operate without a support team?
+      - phase: critiquing
+        user: An open marketplace would create too many messages and nobody would know whether an item was still available.
+      - phase: critiquing
+        user: A smart locker is expensive and a power outage could block access.
+      - phase: critiquing
+        user: A paper board is cheap but someone must update availability and inspect returned items.
+      - phase: converging
+        user: The group chooses a physical cabinet with QR codes and one neighborhood steward. It does not start as an open marketplace.
+      - phase: converging
+        user: The MVP includes item registration, borrow and return, condition history, and a clear damage rule.
+      - phase: confirmation
+        user: The first pilot is one neighborhood. We are not promising a citywide network.
+      - phase: confirmation
+        user: Success means lenders come back and items return on time, but we have not chosen numeric targets.
+      - phase: handoff
+        user: "Create a complete PRD, then use frontend-design twice: create one HTML landing page and one deep HTML pitch deck using prd.md for the building committee."
+    expected:
+      - intent_mentions: [trust, custody, physical cabinet, QR, pilot neighborhood]
+      - prd_must_contain: [operating rules, roles, risks, success signals, MVP boundary, rollout assumptions]
+      - output: [landing-page.html, deck.html]

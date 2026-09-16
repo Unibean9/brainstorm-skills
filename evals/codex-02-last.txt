@@ -1,0 +1,18 @@
+Completed the requested Tablemate replay artifacts:
+
+- [.memlog.md](E:/Working/Unibean/brainstorm-skills/evals/runs/02-tablemate/.memlog.md)
+- [transcript.md](E:/Working/Unibean/brainstorm-skills/evals/runs/02-tablemate/transcript.md)
+- [prd.md](E:/Working/Unibean/brainstorm-skills/evals/runs/02-tablemate/prd.md)
+- [deck.html](E:/Working/Unibean/brainstorm-skills/evals/runs/02-tablemate/deck.html)
+
+Checks:
+
+- Headless/replay explicitly recorded.
+- Exactly 19 numbered turns.
+- PRD final; 7 feature groups; 17 functional requirements.
+- Deck: 12 slides, 12 speaker notes, 4 visual modes, `@media print`, self-contained, no external dependencies.
+- Case-specific evaluator: PASS.
+- Only the four requested files exist in the run directory.
+- No protected or unrelated files modified.
+
+The full suite still reports unrelated pre-existing failures for case 03.
