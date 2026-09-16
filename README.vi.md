@@ -28,18 +28,18 @@ Nếu cần đi nhanh, gọi brainstorming với flag `--sp` (short path). Skill
 
 ## Cài đặt với skills.sh
 
-Sau khi push các thư mục `skills/` lên [Unibean9/brainstormer](https://github.com/Unibean9/brainstormer), cài toàn bộ bộ skill:
+Sau khi push các thư mục `skills/` lên [Unibean9/brainstorm-skills](https://github.com/Unibean9/brainstorm-skills), cài toàn bộ bộ skill:
 
 ```bash
-npx skills add Unibean9/brainstormer
+npx skills add Unibean9/brainstorm-skills
 ```
 
 Hoặc cài từng skill:
 
 ```bash
-npx skills add Unibean9/brainstormer --skill brainstorming
-npx skills add Unibean9/brainstormer --skill prd
-npx skills add Unibean9/brainstormer --skill frontend-design
+npx skills add Unibean9/brainstorm-skills --skill brainstorming
+npx skills add Unibean9/brainstorm-skills --skill prd
+npx skills add Unibean9/brainstorm-skills --skill frontend-design
 ```
 
 Trên Windows, có thể chạy installer có sẵn từ thư mục gốc:
@@ -53,6 +53,8 @@ Trên Windows, có thể chạy installer có sẵn từ thư mục gốc:
 ```powershell
 .\install.ps1 -Skill brainstorming
 ```
+
+Installer PowerShell dùng checkout local nên không cần quyền truy cập GitHub. Cách cài từ remote cần quyền đọc repository; nếu repository private, hãy đăng nhập GitHub trước hoặc clone repo rồi chạy `install.ps1` ở local.
 
 Kiểm tra discovery từ thư mục gốc của repository:
 

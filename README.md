@@ -28,18 +28,18 @@ For a faster one-pass flow, invoke brainstorming with `--sp` (short path). It as
 
 ## Install with skills.sh
 
-After pushing the `skills/` directories to [Unibean9/brainstormer](https://github.com/Unibean9/brainstormer), install the full skill set:
+After pushing the `skills/` directories to [Unibean9/brainstorm-skills](https://github.com/Unibean9/brainstorm-skills), install the full skill set:
 
 ```bash
-npx skills add Unibean9/brainstormer
+npx skills add Unibean9/brainstorm-skills
 ```
 
 Or install individual skills:
 
 ```bash
-npx skills add Unibean9/brainstormer --skill brainstorming
-npx skills add Unibean9/brainstormer --skill prd
-npx skills add Unibean9/brainstormer --skill frontend-design
+npx skills add Unibean9/brainstorm-skills --skill brainstorming
+npx skills add Unibean9/brainstorm-skills --skill prd
+npx skills add Unibean9/brainstorm-skills --skill frontend-design
 ```
 
 On Windows, run the included installer from the repository root:
@@ -53,6 +53,8 @@ To install only one skill, for example:
 ```powershell
 .\install.ps1 -Skill brainstorming
 ```
+
+The PowerShell installer uses the local checkout and does not need GitHub repository access. Remote installation requires read access to the repository; for a private repository, authenticate GitHub first or clone it and run `install.ps1` locally.
 
 Check skill discovery from the repository root:
 
