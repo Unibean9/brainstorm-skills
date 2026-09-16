@@ -42,6 +42,18 @@ npx skills add Unibean9/brainstormer --skill prd
 npx skills add Unibean9/brainstormer --skill frontend-design
 ```
 
+Trên Windows, có thể chạy installer có sẵn từ thư mục gốc:
+
+```powershell
+.\install.ps1
+```
+
+Để chỉ cài một skill, ví dụ:
+
+```powershell
+.\install.ps1 -Skill brainstorming
+```
+
 Kiểm tra discovery từ thư mục gốc của repository:
 
 ```bash

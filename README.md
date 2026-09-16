@@ -42,6 +42,18 @@ npx skills add Unibean9/brainstormer --skill prd
 npx skills add Unibean9/brainstormer --skill frontend-design
 ```
 
+On Windows, run the included installer from the repository root:
+
+```powershell
+.\install.ps1
+```
+
+To install only one skill, for example:
+
+```powershell
+.\install.ps1 -Skill brainstorming
+```
+
 Check skill discovery from the repository root:
 
 ```bash
